@@ -2,19 +2,12 @@
 
 // Read and prepare inputs
 const fs = require('fs');                                                       
-let INPUTS = fs.readFileSync('day-4-input.csv')                    
+const INPUTS = fs.readFileSync('day-4-input.csv')                   
     .toString()          
     .split('\n')
     .map(e => e.trim())
     .map(e => e.split(',').map(e => e.trim()))
     .map(e => e[0]);
-
-// ALGORITHM
-// - Initialize an empty array to hold ID values
-// - Loop through strings in input
-//   - Initialize an empty string
-//   - DO SOMETHING TO CONCAT STRING VALUES
-//   - If string is '', push current string to array and skip to next loop
 
 const ID_KEY_VALUES = [];
 let currentIdValues = [];
@@ -34,9 +27,6 @@ for (let i = 0; i < INPUTS.length; i += 1) {
   }
 }
 
-// ALGORITHM
-// - For each string of id values, split by ' '
-// - For each key-value, add to an object, then push to an array
 const idObjectsArray = [];
 ID_KEY_VALUES.forEach(idKeyValue => {
   let keyValues = idKeyValue.split(' ');
@@ -47,12 +37,6 @@ ID_KEY_VALUES.forEach(idKeyValue => {
   });
   idObjectsArray.push(idObject);
 });
-
-// ALGORITHM
-// - For each idObject, check the keys included
-//   - The idObject is valid if:
-//     - The length of keys is 8
-//     - The length of keys is 7 and only cid is missing
 
 const isValidId = (idObj) => {
   const keys = Object.keys(idObj);
@@ -69,7 +53,6 @@ const isValidByr = (byr) => {
     return false;
   }
 };
-console.log(isValidByr('1921'));
 
 const isValidIyr = (iyr) => {
   if (iyr) {
@@ -78,7 +61,6 @@ const isValidIyr = (iyr) => {
     return false;
   }
 };
-console.log(isValidIyr('2011'));
 
 const isValidEyr = (eyr) => {
   if (eyr) {
@@ -87,14 +69,15 @@ const isValidEyr = (eyr) => {
     return false;
   }
 };
-console.log(isValidEyr('2021'));
 
 const isValidHgt = (hgt) => {
   let suffix = hgt ? hgt.slice(-2) : undefined;
   let numValue; 
   
-  if (hgt.match(/[0-9]/g)) {
-    numValue = Number(hgt.match(/[0-9]/g).join(''));
+  if (hgt) {
+    if (hgt.match(/[0-9]/g)) {
+      numValue = Number(hgt.match(/[0-9]/g).join(''));
+    }
   }
 
   if (suffix === 'cm') {
@@ -105,9 +88,6 @@ const isValidHgt = (hgt) => {
     return false;
   }
 };
-console.log(isValidHgt('151cm'));
-console.log(isValidHgt('60in'));
-console.log(isValidHgt('183cm'));
 
 const isValidHcl = (hcl) => {
   let hasLeadingHash = false;
@@ -122,30 +102,27 @@ const isValidHcl = (hcl) => {
 
   return hasLeadingHash && hasHexChars;
 };
-console.log(isValidHcl('#456fff'));
 
 const isValidEcl = (ecl) => {
   const validEcl = ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'];
   return ecl ? validEcl.includes(ecl) : false;
 };
-console.log(isValidEcl('gry'));
 
 const isValidPid = (pid) => {
   const VALID_PID_LENGTH = 9;
-  if (pid.match(/[\d]/g)) {
-    return pid.match(/[\d]/g).length === VALID_PID_LENGTH;
+  if (pid) {
+    if (pid.match(/[\d]/g)) {
+      return pid.match(/[\d]/g).length === VALID_PID_LENGTH;
+    }
   }
   return false;
 };
-console.log(isValidPid('123456789'));
 
 const isValidCid = (cid) => {
   return !!cid;
 };
 
 const hasValidValues = (idObj) => {
-  console.log(idObjectsArray.indexOf(idObj));
-
   const hasValidByr = isValidByr(idObj.byr);
   const hasValidIyr = isValidIyr(idObj.iyr);
   const hasValidEyr = isValidEyr(idObj.eyr);
@@ -159,11 +136,4 @@ const hasValidValues = (idObj) => {
     hasValidHcl && hasValidEcl && hasValidPid && isValidId(idObj);
 };
 
-let countValidObjs = 0;
-idObjectsArray.forEach(obj => {
-  if (hasValidValues(obj)) {
-    countValidObjs += 1
-  }
-});
-
-console.log(countValidObjs);
+console.log(idObjectsArray.filter(hasValidValues).length); // 156
