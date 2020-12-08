@@ -6,18 +6,6 @@ const INPUTS = fs.readFileSync('day-7-input.csv')
   .toString()
   .split('\n');
 
-// Goal: Create objects that contain string-array key-value pairs describing the mapping
-// of rules
-// Algorithm:
-// - Initialize a target object
-// - Loop through each rule in the input array
-//   - For each rule:
-//     - Extract the "key" bag
-//     - Extract the "value" string describing the "key" bag contents
-//     - Use the "value" string to create an array containing the individual bags mapped
-//       to the original "key" bag
-//     - Add the key-value pair to the target object
-
 let bagRules = {};
 INPUTS.forEach(rule => {
   let ruleWords = rule.replace(/\./g, '')
@@ -41,151 +29,27 @@ INPUTS.forEach(rule => {
 });
 
 // Solution, Part 1
-// TODO: Need to refactor to perform recursively.
-// Goal: Find out which bags can hold at least one 'shiny gold' bag
-const SHINY_GOLD = 'shiny gold';
-let holdsShinyGold = Object.keys(bagRules).filter(key => {
-  return bagRules[key].includes(SHINY_GOLD);
-});
-
-// Goal: Find out which bags can hold the bags that can hold shiny gold bags
-let holdsShinyGoldHolders = [];
-holdsShinyGold.forEach(bag => {
-  let bags = Object.keys(bagRules).filter(key => {
-    return bagRules[key].includes(bag);
-  });
-  if (bags.length > 0) {
-    holdsShinyGoldHolders.push(bags);
+const getBags = (rules, bagArray) => {
+  let allBags = [];
+  while (bagArray.length > 0) {
+    let bags = [];
+    bagArray.forEach(bag => {
+      let bagsToAdd = Object.keys(rules).filter(key => {
+        return rules[key].includes(bag);
+      });
+      if (bagsToAdd.length > 0) {
+        bags.push(bagsToAdd);
+      }
+    });
+    bags = bags.flat();
+    allBags = allBags.concat(bags);
+    bagArray = bags;
   }
-});
-let allShinyGoldHolders = holdsShinyGoldHolders.flat();
 
-// Goal: Find bags that hold those
-let thirdLevelBags = [];
-allShinyGoldHolders.forEach(bag => {
-  let bags = Object.keys(bagRules).filter(key => {
-    return bagRules[key].includes(bag);
-  });
-  if (bags.length > 0) {
-    thirdLevelBags.push(bags);
-  }
-});
-thirdLevelBags = thirdLevelBags.flat();
+  return [...new Set(allBags)].length;
+};
 
-let fourthLevelBags = [];
-thirdLevelBags.forEach(bag => {
-  let bags = Object.keys(bagRules).filter(key => {
-    return bagRules[key].includes(bag);
-  });
-  if (bags.length > 0) {
-    fourthLevelBags.push(bags);
-  }
-});
-fourthLevelBags = fourthLevelBags.flat();
+console.log(getBags(bagRules, ['shiny gold'])); // 226
 
-let fifthLevelBags = [];
-fourthLevelBags.forEach(bag => {
-  let bags = Object.keys(bagRules).filter(key => {
-    return bagRules[key].includes(bag);
-  });
-  if (bags.length > 0) {
-    fifthLevelBags.push(bags);
-  }
-});
-fifthLevelBags = fifthLevelBags.flat();
-
-let sixthLevelBags = [];
-fifthLevelBags.forEach(bag => {
-  let bags = Object.keys(bagRules).filter(key => {
-    return bagRules[key].includes(bag);
-  });
-  if (bags.length > 0) {
-    sixthLevelBags.push(bags);
-  }
-});
-sixthLevelBags = sixthLevelBags.flat();
-
-let seventhLevelBags = [];
-sixthLevelBags.forEach(bag => {
-  let bags = Object.keys(bagRules).filter(key => {
-    return bagRules[key].includes(bag);
-  });
-  if (bags.length > 0) {
-    seventhLevelBags.push(bags);
-  }
-});
-seventhLevelBags = seventhLevelBags.flat();
-
-let eighthLevelBags = [];
-seventhLevelBags.forEach(bag => {
-  let bags = Object.keys(bagRules).filter(key => {
-    return bagRules[key].includes(bag);
-  });
-  if (bags.length > 0) {
-    eighthLevelBags.push(bags);
-  }
-});
-eighthLevelBags = eighthLevelBags.flat();
-
-let ninthLevelBags = [];
-eighthLevelBags.forEach(bag => {
-  let bags = Object.keys(bagRules).filter(key => {
-    return bagRules[key].includes(bag);
-  });
-  if (bags.length > 0) {
-    ninthLevelBags.push(bags);
-  }
-});
-ninthLevelBags = ninthLevelBags.flat();
-
-let tenthLevelBags = [];
-ninthLevelBags.forEach(bag => {
-  let bags = Object.keys(bagRules).filter(key => {
-    return bagRules[key].includes(bag);
-  });
-  if (bags.length > 0) {
-    tenthLevelBags.push(bags);
-  }
-});
-tenthLevelBags = tenthLevelBags.flat();
-
-let eleventhLevelBags = [];
-tenthLevelBags.forEach(bag => {
-  let bags = Object.keys(bagRules).filter(key => {
-    return bagRules[key].includes(bag);
-  });
-  if (bags.length > 0) {
-    eleventhLevelBags.push(bags);
-  }
-});
-eleventhLevelBags = eleventhLevelBags.flat();
-
-let twelfthLevelBags = [];
-eleventhLevelBags.forEach(bag => {
-  let bags = Object.keys(bagRules).filter(key => {
-    return bagRules[key].includes(bag);
-  });
-  if (bags.length > 0) {
-    twelfthLevelBags.push(bags);
-  }
-});
-twelfthLevelBags = twelfthLevelBags.flat();
-
-let thirteenthLevelBags = [];
-twelfthLevelBags.forEach(bag => {
-  let bags = Object.keys(bagRules).filter(key => {
-    return bagRules[key].includes(bag);
-  });
-  if (bags.length > 0) {
-    thirteenthLevelBags.push(bags);
-  }
-});
-thirteenthLevelBags = thirteenthLevelBags.flat();
-
-let allBags = holdsShinyGold.concat(
-  allShinyGoldHolders, thirdLevelBags, fourthLevelBags,
-  fifthLevelBags, sixthLevelBags, seventhLevelBags, eighthLevelBags, 
-  ninthLevelBags, tenthLevelBags, eleventhLevelBags, twelfthLevelBags,
-  thirteenthLevelBags
-);
-console.log([...new Set(allBags)].length); // 226
+// Solution, Part 2
+// TODO
